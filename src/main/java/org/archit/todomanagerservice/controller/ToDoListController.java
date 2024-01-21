@@ -12,7 +12,6 @@ import org.archit.todomanagerservice.service.ToDoListService;
 import org.archit.todomanagerservice.util.PaginationUtil;
 import org.archit.todomanagerservice.util.ToDoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,11 +27,13 @@ public class ToDoListController {
 
     @Operation(summary = "Gets all to-do lists by page request")
     @GetMapping(produces = "application/json")
-    public ResponseEntity<List<ToDoListResponse>> getAllToDoLists(@RequestParam final int page, @RequestParam final int size) {
-        return ResponseEntity.ok(this.toDoListService.getToDoLists(PaginationUtil.withLimitAndDerivedSort(page, size))
-            .stream()
-            .map(ToDoUtil::toToDoListResponse)
-            .toList());
+    public ResponseEntity<List<ToDoListResponse>> getAllToDoLists(@RequestParam final int page,
+        @RequestParam final int size) {
+        return ResponseEntity.ok(
+            this.toDoListService.getToDoLists(PaginationUtil.withLimitAndDerivedSort(page, size))
+                .stream()
+                .map(ToDoUtil::toToDoListResponse)
+                .toList());
     }
 
     @Operation(summary = "Gets a to-do list by id")

@@ -24,7 +24,8 @@ public class OpenAPIConfig {
         contact.setName("Archit Gupta");
         contact.setUrl("https://www.github.com/architgupta13");
 
-        val mitLicense = new License().name("MIT License").url("https://choosealicense.com/licenses/mit/");
+        val mitLicense = new License().name("MIT License")
+            .url("https://choosealicense.com/licenses/mit/");
 
         val info = new Info()
             .title("TO-DO Manager API")

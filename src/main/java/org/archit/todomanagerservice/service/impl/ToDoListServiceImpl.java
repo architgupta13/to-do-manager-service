@@ -45,7 +45,8 @@ public class ToDoListServiceImpl implements ToDoListService {
 
     @Override
     public ToDoList updateToDoList(final long id, final ToDoListRequest request) {
-        val toDoListInDb = getToDoList(id).orElseThrow(()-> new RuntimeException("To-do List with specified id not found"));
+        val toDoListInDb = getToDoList(id).orElseThrow(
+            () -> new RuntimeException("To-do List with specified id not found"));
         ToDoUtil.updateToDoList(toDoListInDb, request);
         return this.toDoListRepository.save(toDoListInDb);
     }

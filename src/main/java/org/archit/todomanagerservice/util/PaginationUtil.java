@@ -1,6 +1,5 @@
 package org.archit.todomanagerservice.util;
 
-import java.util.Objects;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,7 +13,6 @@ public class PaginationUtil {
     public static Pageable withLimitAndDerivedSort(final int pageNumber, final int pageSize) {
         return PageRequest.of(pageNumber, deriveLimit(pageSize), DEFAULT_SORT);
     }
-
 
 
     private static int deriveLimit(final int limit) {

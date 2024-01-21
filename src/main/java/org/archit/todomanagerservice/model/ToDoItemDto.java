@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ToDoItemDto {
+
     private int order;
     private String description;
     private boolean completed;
