@@ -13,6 +13,7 @@ import org.archit.todomanagerservice.util.PaginationUtil;
 import org.archit.todomanagerservice.util.ToDoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -26,6 +27,7 @@ public class ToDoListController {
     private ToDoListService toDoListService;
 
     @Operation(summary = "Gets all to-do lists by page request")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<ToDoListResponse>> getAllToDoLists(@RequestParam final int page,
         @RequestParam final int size) {
@@ -37,6 +39,7 @@ public class ToDoListController {
     }
 
     @Operation(summary = "Gets a to-do list by id")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<ToDoListResponse> getToDoListById(@PathVariable final Long id) {
         return ResponseEntity.ok(this.toDoListService.getToDoList(id)
@@ -45,6 +48,7 @@ public class ToDoListController {
     }
 
     @Operation(summary = "Creates a to-do list")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<ToDoListResponse> createToDoList(
         @RequestBody final ToDoListRequest request) {
@@ -55,6 +59,7 @@ public class ToDoListController {
     }
 
     @Operation(summary = "Updates a to-do list")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PutMapping(path = "/{id}", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ToDoListResponse> updateToDoList(@PathVariable final Long id,
         @RequestBody final ToDoListRequest request) {
@@ -65,6 +70,7 @@ public class ToDoListController {
     }
 
     @Operation(summary = "Deletes a to-do list by id")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @DeleteMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<Void> deleteToDoList(@PathVariable final Long id) {
         this.toDoListService.deleteToDoList(Collections.singletonList(id));

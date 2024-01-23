@@ -11,9 +11,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.archit.todomanagerservice.entity.ToDoItem;
 import org.archit.todomanagerservice.entity.ToDoList;
 import org.archit.todomanagerservice.entity.ToDoListStatus;
+import org.archit.todomanagerservice.entity.User;
 import org.archit.todomanagerservice.model.ToDoItemDto;
 import org.archit.todomanagerservice.model.ToDoListRequest;
 import org.archit.todomanagerservice.model.ToDoListResponse;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.CollectionUtils;
 
 public class ToDoUtil {
@@ -41,10 +43,16 @@ public class ToDoUtil {
         val now = new Date();
         toDoList.setCreatedDate(now);
         toDoList.setModifiedDate(now);
+        val user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        toDoList.setUsername(user.getUsername());
 
         Optional.ofNullable(request.getName())
             .ifPresentOrElse(toDoList::setName, () -> RandomStringUtils.randomAlphabetic(10));
-        toDoList.setStatus(ToDoListStatus.CREATED);
+        Optional.ofNullable(request.getItems())
+            .map(ToDoUtil::toToDoItems)
+            .ifPresent(toDoList::setItems);
+        Optional.ofNullable(request.getStatus())
+            .ifPresentOrElse(toDoList::setStatus, () -> toDoList.setStatus(ToDoListStatus.CREATED));
 
         return toDoList;
     }
@@ -59,7 +67,8 @@ public class ToDoUtil {
 
         Optional.ofNullable(request.getName()).ifPresent(toDoListInDb::setName);
         Optional.ofNullable(request.getScheduledDate()).ifPresent(toDoListInDb::setScheduledDate);
-        Optional.ofNullable(request.getItems()).map(ToDoUtil::toToDoItems)
+        Optional.ofNullable(request.getItems())
+            .map(ToDoUtil::toToDoItems)
             .ifPresent(toDoListInDb::setItems);
         Optional.ofNullable(request.getStatus()).ifPresent(toDoListInDb::setStatus);
     }
@@ -77,15 +86,18 @@ public class ToDoUtil {
             return Collections.emptyList();
         }
 
-        return toDoItemDtos.stream().map(ToDoUtil::toToDoItem).toList();
+        return toDoItemDtos.stream()
+            .map(ToDoUtil::toToDoItem)
+            .toList();
     }
 
-    private static ToDoItem toToDoItem(final ToDoItemDto toDoItemDto) {
+    public static ToDoItem toToDoItem(final ToDoItemDto request) {
         val toDoItem = new ToDoItem();
 
-        Optional.of(toDoItemDto.getOrder()).ifPresent(toDoItem::setOrder);
-        Optional.ofNullable(toDoItemDto.getDescription()).ifPresent(toDoItem::setDescription);
-        toDoItem.setCompleted(toDoItemDto.isCompleted());
+        Optional.of(request.getId()).ifPresent(toDoItem::setId);
+        Optional.of(request.getOrder()).ifPresent(toDoItem::setOrder);
+        Optional.ofNullable(request.getDescription()).ifPresent(toDoItem::setDescription);
+        toDoItem.setCompleted(request.isCompleted());
 
         return toDoItem;
     }
